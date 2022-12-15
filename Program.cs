@@ -76,10 +76,18 @@ namespace Sandbox
             Excel.Workbook wb= new Excel.Workbook();
             Excel.Worksheet ws= wb.ActiveSheet;
             int index = 1;
+            int rowstart = 7;
             foreach (var user in _user)
             {
-                // dien giu lieu
+                ws.Cells[rowstart, 1] = index++;
+                ws.Cells[rowstart, 2]=user.UserID;
+                ws.Cells[rowstart, 3]=user.UserName;
+                ws.Cells[rowstart, 4] = user.Phone;
+                rowstart++;
             }
+            wb.Save();
+            wb.Close();
+            Console.WriteLine("Thanh cong");
 
         }
         public static string DateTimeToString()
