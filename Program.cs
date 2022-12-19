@@ -20,11 +20,13 @@ namespace Sandbox
     public class Program
     {
         static Excel.Application xlApp = new Excel.Application();
-        static string _pDebug = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+        static string _pDebug = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); // lay dia chi file tool
         static List<user> _user = new List<user>();
         public void main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
+            read_Data(@"C:\Users\Con Cac\Desktop\data.xlsx");
+            write_data(@"C:\Users\Con Cac\Desktop\_test");
         }
         public static void read_Data(string psourcefilname)
         {
@@ -49,9 +51,9 @@ namespace Sandbox
             {
                 var u = new user
                 {
-                    UserID = xlWorksheet.Cells[i,5].Value.ToString(),
-                    UserName = xlWorksheet.Cells[i,6].Value.ToString(),
-                    Phone= xlWorksheet.Cells[i,3].Value.ToString(),
+                    UserID = xlWorksheet.Cells[i,3].Value.ToString(),
+                    UserName = xlWorksheet.Cells[i,5].Value.ToString(),
+                    Phone= xlWorksheet.Cells[i,4].Value.ToString(),
                 };
                 _user.Add(u);
             }
@@ -67,13 +69,12 @@ namespace Sandbox
                 Console.WriteLine("File khong co du lieu!!");
                 return;
             }
-            // tao thu muc
-            if (!Directory.Exists(destFileName))
+            // tao thu muc            if (!Directory.Exists(destFileName))
             {
                 Directory.CreateDirectory(destFileName);
             }
             // edit file
-            Excel.Workbook wb= new Excel.Workbook();
+            Excel.Workbook wb = xlApp.Workbook.Open(destFileName);
             Excel.Worksheet ws= wb.ActiveSheet;
             int index = 1;
             int rowstart = 7;
