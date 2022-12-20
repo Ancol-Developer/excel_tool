@@ -22,10 +22,10 @@ namespace Sandbox
         static Excel.Application xlApp = new Excel.Application();
         static string _pDebug = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); // lay dia chi file tool
         static List<user> _user = new List<user>();
-        public void main(string[] args)
+        static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-            read_Data(@"C:\Users\Con Cac\Desktop\data.xlsx");
+            read_Data(@"C:\Users\Con Cac\Desktop\data1.xlsx");
             write_data(@"C:\Users\Con Cac\Desktop\_test");
         }
         public static void read_Data(string psourcefilname)
@@ -35,8 +35,8 @@ namespace Sandbox
                 Console.WriteLine("Khong ton tai file!!!");
                 return;
             }
-            Excel.Workbook xlWorkbook= xlApp.Workbooks.Open(psourcefilname);
-            Excel.Worksheet xlWorksheet= xlWorkbook.ActiveSheet();
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(psourcefilname);
+            Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             var lastrow = xlWorksheet.Cells.Find("*", System.Reflection.Missing.Value,
                                System.Reflection.Missing.Value, System.Reflection.Missing.Value,
                                Excel.XlSearchOrder.xlByRows, Excel.XlSearchDirection.xlPrevious,
@@ -51,9 +51,9 @@ namespace Sandbox
             {
                 var u = new user
                 {
-                    UserID = xlWorksheet.Cells[i,3].Value.ToString(),
-                    UserName = xlWorksheet.Cells[i,5].Value.ToString(),
-                    Phone= xlWorksheet.Cells[i,4].Value.ToString(),
+                    UserID = xlWorksheet.Cells[i, 3].Value.ToString(),
+                    UserName = xlWorksheet.Cells[i, 5].Value.ToString(),
+                    Phone = xlWorksheet.Cells[i, 4].Value.ToString(),
                 };
                 _user.Add(u);
             }
@@ -61,28 +61,30 @@ namespace Sandbox
         }
         public static void write_data(string pdest)
         {
-            //var sourceFileName = _pDebug + @"/filetemplate.xlsx";
-            var destFileName = pdest + $"//bao_cao_hang_ngay_{DateTimeToString()}.xslx";// noi tao file bao cao
+            var sourceFileName = _pDebug + @"/template.xlsx";
+            var destFileName = pdest + $"//BaoCaoHangNgay_{DateTimeToString()}.xlsx";
             // kiem tra du lieu
-            if (_user==null||_user.Count==0)
+            if (_user == null || _user.Count == 0)
             {
                 Console.WriteLine("File khong co du lieu!!");
                 return;
             }
-            // tao thu muc            if (!Directory.Exists(destFileName))
+            // tao thu muc
+            if (!Directory.Exists(pdest))
             {
-                Directory.CreateDirectory(destFileName);
+                Directory.CreateDirectory(pdest);
             }
+            File.Copy(sourceFileName,destFileName);
             // edit file
-            Excel.Workbook wb = xlApp.Workbook.Open(destFileName);
-            Excel.Worksheet ws= wb.ActiveSheet;
+            Excel.Workbook wb = xlApp.Workbooks.Open(destFileName);// Workbook.Open(destFileName);
+            Excel.Worksheet ws = wb.ActiveSheet;
             int index = 1;
             int rowstart = 7;
             foreach (var user in _user)
             {
-                ws.Cells[rowstart, 1] = index++;
-                ws.Cells[rowstart, 2]=user.UserID;
-                ws.Cells[rowstart, 3]=user.UserName;
+                ws.Cells[rowstart+1, 1] = index++;
+                ws.Cells[rowstart, 2] = user.UserID;
+                ws.Cells[rowstart, 3] = user.UserName;
                 ws.Cells[rowstart, 4] = user.Phone;
                 rowstart++;
             }
