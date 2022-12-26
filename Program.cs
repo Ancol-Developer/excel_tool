@@ -1,102 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Excel = Microsoft.Office.Interop.Excel;
-namespace Sandbox
+namespace sandbox
 {
-    class user
+    public class employee
     {
-        public string UserID { get; set; }
-        public string UserName { get; set; }
-        public string Phone { get; set; }
-
-    }
-    public class Program
-    {
-        static Excel.Application xlApp = new Excel.Application();
-        static string _pDebug = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); // lay dia chi file tool
-        static List<user> _user = new List<user>();
-        static void Main(string[] args)
+        public enum job
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            read_Data(@"C:\Users\Con Cac\Desktop\data1.xlsx");
-            write_data(@"C:\Users\Con Cac\Desktop\_test");
+            fulltime = 1,
+            parttime = 2,
+            casual = 3,
+        };
+        public job type;
+        public int IDs { get; set; }
+        public string Name { get; set; }
+        public string gender { get; set; }
+        public double std_hour { get; set; }
+        public double OT_hour { get; set; }
+        public double rate { get; set; }
+        void setjob(job j)
+        { 
+            this.type = j;
         }
-        public static void read_Data(string psourcefilname)
+        public double calculator()
         {
-            if (!File.Exists(psourcefilname))
-            {
-                Console.WriteLine("Khong ton tai file!!!");
-                return;
-            }
-            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(psourcefilname);
-            Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
-            var lastrow = xlWorksheet.Cells.Find("*", System.Reflection.Missing.Value,
-                               System.Reflection.Missing.Value, System.Reflection.Missing.Value,
-                               Excel.XlSearchOrder.xlByRows, Excel.XlSearchDirection.xlPrevious,
-                               false, System.Reflection.Missing.Value, System.Reflection.Missing.Value).Row;
-            /*var lastcolum = xlWorksheet.Cells.Find("*", System.Reflection.Missing.Value,
-                               System.Reflection.Missing.Value, System.Reflection.Missing.Value,
-                               Excel.XlSearchOrder.xlByColumns, Excel.XlSearchDirection.xlPrevious,
-                               false, System.Reflection.Missing.Value, System.Reflection.Missing.Value).Column;*/
-            // cau truc file doc va save file==> luu dien vao mot file khac
-            var rowstart = 3;
-            for (int i = rowstart; i < lastrow; i++)
-            {
-                var u = new user
-                {
-                    UserID = xlWorksheet.Cells[i, 3].Value.ToString(),
-                    UserName = xlWorksheet.Cells[i, 5].Value.ToString(),
-                    Phone = xlWorksheet.Cells[i, 4].Value.ToString(),
-                };
-                _user.Add(u);
-            }
-            xlWorkbook.Close();
+            return std_hour * type;
         }
-        public static void write_data(string pdest)
-        {
-            var sourceFileName = _pDebug + @"/template.xlsx";
-            var destFileName = pdest + $"//BaoCaoHangNgay_{DateTimeToString()}.xlsx";
-            // kiem tra du lieu
-            if (_user == null || _user.Count == 0)
-            {
-                Console.WriteLine("File khong co du lieu!!");
-                return;
-            }
-            // tao thu muc
-            if (!Directory.Exists(pdest))
-            {
-                Directory.CreateDirectory(pdest);
-            }
-            File.Copy(sourceFileName,destFileName);
-            // edit file
-            Excel.Workbook wb = xlApp.Workbooks.Open(destFileName);// Workbook.Open(destFileName);
-            Excel.Worksheet ws = wb.ActiveSheet;
-            int index = 1;
-            int rowstart = 7;
-            foreach (var user in _user)
-            {
-                ws.Cells[rowstart+1, 1] = index++;
-                ws.Cells[rowstart, 2] = user.UserID;
-                ws.Cells[rowstart, 3] = user.UserName;
-                ws.Cells[rowstart, 4] = user.Phone;
-                rowstart++;
-            }
-            wb.Save();
-            wb.Close();
-            Console.WriteLine("Thanh cong");
-
+        employee() {
+            Console.WriteLine("Hello");
         }
-        public static string DateTimeToString()
+        public void Main()
         {
-            var now = DateTime.Now;
-            return now.ToString("ddMMyyyy_hhmmss");
+            
         }
     }
 }
